@@ -44,4 +44,12 @@ class HuffmanSuite extends FunSuite {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
+
+  test("encode/decode invariant") {
+    def f(s: String) = decode(frenchCode, encode(frenchCode)(s.toList)) === s.toList
+    assert(f("huff"))
+    assert(f("aaaa"))
+    assert(f("c"))
+    assert(f("deadfa"))
+  }
 }
