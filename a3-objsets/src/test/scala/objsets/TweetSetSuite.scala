@@ -62,11 +62,38 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
+  test("union of two parts of set - odd/even retweets") {
+    val oddTweets = TweetReader.allTweets filter (x => x.retweets % 2 == 1)
+    val evenTweets = TweetReader.allTweets filter (x => x.retweets % 2 == 0)
+    assert(TweetReader.allTweets.size == oddTweets.size + evenTweets.size)
+  }
+
+  test("union of two parts of set - odd/even text size") {
+    val oddTweets = TweetReader.allTweets filter (x => x.text.length % 2 == 1)
+    val evenTweets = TweetReader.allTweets filter (x => x.text.length % 2 == 0)
+    assert(TweetReader.allTweets.size == oddTweets.size + evenTweets.size)
+  }
+
+  test("mostRetweets") {
+    val mostTweet = TweetReader.allTweets.mostRetweeted
+    assert(TweetReader.allTweets.filter(p => p.retweets > mostTweet.retweets).isEmpty)
+  }
+
   test("descending: set5") {
     new TestSets {
       val trends = set5.descendingByRetweet
       assert(!trends.isEmpty)
       assert(trends.head.user == "a" || trends.head.user == "b")
     }
+  }
+
+  test("descending") {
+    def isSorted(head: Tweet, tail: TweetList): Boolean = {
+      if (tail.isEmpty) true
+      else if (head.retweets >= tail.head.retweets) isSorted(tail.head, tail.tail)
+      else false
+    }
+    val descTweets = TweetReader.allTweets.descendingByRetweet
+    assert(isSorted(descTweets.head, descTweets.tail))
   }
 }
